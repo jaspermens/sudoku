@@ -25,6 +25,12 @@ class SudokuBoard:
 
     def set_cell(self, i: int, j: int, value: int) -> None:
         """ Sets the value of a cell in the sudoku and updates the 'can-be' portion of the board accordingly"""
+        if value == 0 and self.board[0, i, j] > 0:
+            print(f"clearing cell! {i=} {j=}")
+            self.board[0, i, j] = 0
+            self.recompute_possibilities()
+            return
+            
         if self.board[0, i, j]:
             print("Cell is already filled!")
             return
@@ -38,6 +44,15 @@ class SudokuBoard:
         self.board[value, i, :] = False
         self.board[value, self.cluster_slice_of(i,j)] = False
 
+    def recompute_possibilities(self) -> None:
+        self.board[1:10, :, :] = True 
+        for (i,j), value in np.ndenumerate(self.board[0,:,:]):
+            if value == 0:
+                continue
+            self.board[value, :, j] = False
+            self.board[value, i, :] = False
+            self.board[value, self.cluster_slice_of(i,j)] = False
+
     def is_valid(self, i: int, j: int, value: int) -> bool:
         """ Returns False if the move is not allowed given the rest of the board"""
         return self.board[value, i, j] == True
@@ -46,7 +61,7 @@ class SudokuBoard:
         return str(self.board)#.replace('0', "-")
     
     def save_board(self) -> None:
-        with open(self.board_file, 'w+') as f:
+        with open(self.board_file, 'wb') as f:
             pk.dump(self.board, f)
     
     def load_board(self) -> None:
