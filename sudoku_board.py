@@ -40,6 +40,7 @@ class SudokuBoard:
             return
         
         self.board[0, i, j] = value
+        self.board[1:10, i, j] = False
         self.board[value, :, j] = False
         self.board[value, i, :] = False
         self.board[value, self.cluster_slice_of(i,j)] = False
@@ -49,6 +50,7 @@ class SudokuBoard:
         for (i,j), value in np.ndenumerate(self.board[0,:,:]):
             if value == 0:
                 continue
+            self.board[1:10, i, j] = False
             self.board[value, :, j] = False
             self.board[value, i, :] = False
             self.board[value, self.cluster_slice_of(i,j)] = False
