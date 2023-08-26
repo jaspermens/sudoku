@@ -34,5 +34,25 @@ class SudokuSolver:
                     sudoku.set_cell(possible_places[0], j, n)
                     return True
             
+
+            for cluster in range(1, sudoku.sidelength+1):
+                i, j = np.where(layer * sudoku.board[10,:,:] == cluster)
+                if len(i) != 1:
+                    continue
+            
+                print(f"CLUSTER: cell {i,j}, value {n}")
+                sudoku.set_cell(i, j, n)
+                return True
+                
+
         print("failed to find a next step :/")
         return False
+    
+
+if __name__ == "__main__":
+    board = SudokuBoard()
+    solver = SudokuSolver()
+    board.load_board()
+    print(board.board[0,:,:])
+    solver.solve_step(board)
+    print(board.board[0,:,:])
